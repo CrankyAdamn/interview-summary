@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applicant Interview Summary</title>
+    <!-- ไลบรารีสำหรับแปลงหน้าเว็บเป็นรูปภาพ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        /* Apple-inspired Minimalist Design */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #f5f5f7; 
+            color: #1d1d1f; 
+            margin: 0; 
+            padding: 20px 15px;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Wrapper ควบคุมพื้นที่หายใจตอน Export */
+        .export-wrapper {
+            max-width: 580px; 
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        .form-container { 
+            width: 100%;
+        }
+
+        /* Action Buttons */
+        .action-bar { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-top: 20px; 
+            margin-bottom: 30px;
+        }
+        .btn { 
+            padding: 10px 20px; 
+            border-radius: 20px; 
+            font-size: 14px; 
+            font-weight: 500; 
+            cursor: pointer; 
+            border: none;
+            transition: all 0.2s ease;
+        }
+        .btn-print { background-color: #ff3b30; color: white; font-weight: 600; }
+        .btn-print:hover { background-color: #e0352b; }
+        .btn-clear { background-color: #e8e8ed; color: #1d1d1f; }
+        .btn-clear:hover { background-color: #d2d2d7; }
+        
+        /* 📐 หัวเอกสารชิดขวา */
+        h1 { 
+            font-size: 20px; 
+            font-weight: 600; 
+            letter-spacing: -0.5px;
+            margin-top: 5px;
+            margin-bottom: 18px; 
+            text-align: right;
+            color: #1d1d1f;
+        }
+
+        /* 🔴 สไตล์สัญลักษณ์ | สีแดงตัวหนา */
+        h1 .divider {
+            color: #ff3b30;
+            font-weight: 800;
+            margin: 0 6px;
+        }
+
+        /* 🍃 ปรับชื่อร้านให้เป็นตัวบาง */
+        h1 .shop-name {
+            font-weight: 400;
+            color: #515154;
+        }
+
+        /* Single Column Card */
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+            border: 1px solid #e8e8ed;
+        }
+        
+        /* ไฮไลท์กรอบสีแดง */
+        .card.highlight-red {
+            border: 2px solid #ff3b30;
+            box-shadow: 0 4px 16px rgba(255, 59, 48, 0.08);
+        }
+        
+        h3 { 
+            font-size: 13px; 
+            font-weight: 600; 
+            color: #ff3b30; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            margin-top: 0;
+            margin-bottom: 14px;
+            border-bottom: 1px solid #f5f5f7;
+            padding-bottom: 6px;
+        }
+
+        /* 2-Column Grid */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .form-group { 
+            margin-bottom: 10px; 
+        }
+        .form-group:last-child { margin-bottom: 0; }
+
+        label { 
+            display: block; 
+            font-weight: 500; 
+            margin-bottom: 4px; 
+            font-size: 13px; 
+            color: #1d1d1f; 
+        }
+        
+        input[type="text"] { 
+            width: 100%; 
+            padding: 9px 14px 10px 14px; 
+            border: 1px solid #d2d2d7; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 14px; 
+            line-height: 1.4;
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+            transition: all 0.2s ease;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #0071e3;
+            background-color: #fff;
+        }
+
+        /* เส้นขอบสีแดงสำหรับเน้นชื่อและที่อยู่ */
+        .input-highlight-red {
+            border: 1.5px solid #ff3b30 !important;
+            background-color: #fffafafb !important;
+        }
+        .input-highlight-red:focus {
+            border-color: #ff2317 !important;
+            box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.15);
+        }
+        
+        .checkbox-group { 
+            display: flex; 
+            flex-direction: column;
+            gap: 5px; 
+            margin-top: 2px; 
+        }
+        
+        /* เพิ่มคลาสสำหรับแบ่งกลุ่ม checkbox ย่อยด้านในเป็น 2 คอลัมน์ */
+        .checkbox-sub-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        .checkbox-label { 
+            display: flex; 
+            align-items: center; 
+            background: #f5f5f7; 
+            padding: 9px 14px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 13px; 
+            transition: all 0.2s ease;
+        }
+        .checkbox-label input { 
+            margin-right: 10px; 
+            width: 15px;
+            height: 15px;
+            accent-color: #0071e3;
+            flex-shrink: 0;
+        }
+        
+        /* สีน้ำเงินพาสเทลเมื่อเลือก YES */
+        .checkbox-label.radio-yes:has(input:checked) {
+            background-color: #e8f2fc;
+            color: #0071e3;
+            font-weight: 600;
+        }
+        
+        /* สีแดงพาสเทลเมื่อเลือก NO */
+        .checkbox-label.radio-no:has(input:checked) {
+            background-color: #ffebeb;
+            color: #ff3b30;
+            font-weight: 600;
+        }
+
+        .checkbox-label:not(.radio-yes):not(.radio-no):has(input:checked) {
+            background-color: #e8f2fc;
+            font-weight: 500;
+        }
+
+        .row-flex {
+            display: flex;
+            gap: 8px;
+            flex-direction: row;
+        }
+        .row-flex .checkbox-label {
+            flex: 1;
+            justify-content: center;
+        }
+
+        /* Experience Specific Style */
+        .exp-row {
+            display: flex;
+            flex-direction: column;
+            background: #f5f5f7;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            gap: 6px;
+        }
+        .exp-main {
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+        }
+        .exp-main input { margin-right: 10px; width: 15px; height: 15px; accent-color: #0071e3; }
+        .years-select {
+            display: flex;
+            gap: 4px;
+            background: #e8e8ed;
+            padding: 3px;
+            border-radius: 6px;
+            margin-left: 25px;
+            max-width: 220px;
+        }
+        .years-btn {
+            flex: 1;
+            font-size: 11px;
+            text-align: center;
+            padding: 4px 0;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 4px;
+            color: #515154;
+        }
+        .years-btn input { display: none; }
+        .years-btn:has(input:checked) {
+            background: #ffffff;
+            font-weight: 600;
+            color: #1d1d1f;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        /* Availability Table */
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 3px; 
+            font-size: 13px; 
+        }
+        th, td { 
+            padding: 8px 4px; 
+            text-align: center; 
+            border-bottom: 1px solid #f5f5f7;
+            vertical-align: top;
+        }
+        th { font-weight: 500; color: #86868b; font-size: 11px; }
+        td:first-child { text-align: left; font-weight: 500; width: 22%; padding-top: 12px; }
+        table input[type="checkbox"] { width: 15px; height: 15px; accent-color: #0071e3; margin-bottom: 2px; }
+        
+        .cell-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 38px;
+        }
+        .time-box {
+            display: none; 
+            width: 90%;
+            margin: 4px auto 0 auto;
+            padding: 4px 6px;
+            font-size: 11px;
+            border: 1px solid #d2d2d7;
+            border-radius: 4px;
+            text-align: center;
+            background: #ffffff;
+            box-sizing: border-box;
+        }
+        .time-text {
+            display: none;
+            font-size: 11px;
+            font-weight: 500;
+            color: #1d1d1f;
+            margin-top: 4px;
+            text-align: center;
+        }
+        
+        .skills-header { 
+            font-size: 13px; 
+            font-weight: 600; 
+            margin-top: 12px; 
+            margin-bottom: 6px; 
+            color: #434344;
+        }
+        
+        textarea { 
+            width: 100%; 
+            height: 75px; 
+            padding: 10px 14px; 
+            border: 1px solid #d2d2d7; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 14px; 
+            line-height: 1.4;
+            background-color: #f5f5f7;
+            resize: none; 
+        }
+        textarea:focus { outline: none; border-color: #0071e3; background-color: #fff; }
+
+        .hide-on-export {
+            display: none !important;
+        }
+        
+        #holiday-details-inside {
+            display: none;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #e8e8ed;
+        }
+
+        /* 📸 ฟิกซ์ Padding รอบข้างตอนแปลงภาพเพื่อให้รูปภาพดูมีพื้นที่หายใจ */
+        .exporting-area {
+            padding: 24px !important;
+            background-color: #f5f5f7 !important;
+            border-radius: 0px !important;
+        }
+
+        .exporting .time-box {
+            display: none !important;
+        }
+        .exporting .time-text {
+            display: block !important;
+        }
+    </style>
+</head>
+<body>
+
+<div class="export-wrapper" id="capture-wrapper">
+<div class="form-container" id="capture-area">
+    
+    <!-- ส่วนหัวกระดาษชิดขวา -->
+    <h1>Applicant Interview Summary<span class="divider">|</span><span class="shop-name">Hero Sushi Tuggerah</span></h1>
+
+    <!-- Section 1: Profile -->
+    <div class="card">
+        <h3>👤 Applicant Profile</h3>
+        <div class="grid-2">
+            <div class="form-group">
+                <label>Applicant Name</label>
+                <input type="text" id="applicant-name" class="input-highlight-red" placeholder="Full name">
+            </div>
+            <div class="form-group">
+                <label>Address / Suburb</label>
+                <input type="text" class="input-highlight-red" placeholder="Suburb">
+            </div>
+        </div>
+        
+        <div class="grid-2">
+            <div class="form-group">
+                <label>TFN Status</label>
+                <div class="checkbox-group row-flex">
+                    <label class="checkbox-label radio-yes"><input type="radio" name="tfn"> Yes</label>
+                    <label class="checkbox-label radio-no"><input type="radio" name="tfn"> No</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Superannuation</label>
+                <div class="checkbox-group row-flex">
+                    <label class="checkbox-label radio-yes"><input type="radio" name="super"> Yes</label>
+                    <label class="checkbox-label radio-no"><input type="radio" name="super"> No</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Preferred Employment Type</label>
+            <div class="checkbox-group row-flex">
+                <label class="checkbox-label"><input type="checkbox"> Full-time</label>
+                <label class="checkbox-label"><input type="checkbox"> Part-time</label>
+                <label class="checkbox-label"><input type="checkbox"> Casual</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Transport / Commute</label>
+            <div class="checkbox-group row-flex">
+                <label class="checkbox-label"><input type="checkbox"> Own Car</label>
+                <label class="checkbox-label"><input type="checkbox"> Public</label>
+                <label class="checkbox-label"><input type="checkbox"> Drop-off</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: Availability -->
+    <div class="card highlight-red">
+        <h3>📅 Availability & Shifts</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    <th>☀️ Day</th>
+                    <th>🌙 Night</th>
+                    <th>🕒 All</th>
+                    <th>❌ N/A</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="day-row">
+                    <td>Monday</td>
+                    <td><div class="cell-content"><input type="checkbox" onchange="toggleTime(this)"><input type="text" class="time-box" placeholder="e.g. 4-9" oninput="syncText(this)"><span class="time-text"></span></div></td>
+                    <td><div class="cell-content"><input type="checkbox" onchange="toggleTime(this)"><input type="text" class="time-box" placeholder="e.g. 4-9" oninput="syncText(this)"><span class="time-text"></span></div></td>
+                    <td><div class="cell-content"><input type="checkbox"></div></td>
+                    <td><div class="cell-content"><input type="checkbox"></div></td>
+                </tr>
+                <tr class="day-row">
+                    <td>Tuesday</td>
+                    <td><div class="cell-content"><input type="checkbox" onchange="toggleTime(this)"><input type="text" class="time-box" placeholder="e.g. 4-9" oninput="syncText(this)"><span class="time-text"></span></div></td>
+                    <td><div class="cell-content"><input type="checkbox" onchange="toggleTime(this)"><input type="text" class="time-box" placeholder="e.g. 4-9" oninput="syncText(this)"><span class="time-text"></span></div></td>
+                    <td><div class="cell-content"><input type="checkbox"></div></td>
+                    <td><div class="cell-content"><input type="checkbox"></div></td>
+                </tr>
+                <tr class="day-row">
+                    <td>Wednesday</td>
+                    <td><div class="cell-content"><input type="checkbox" onchange="toggleTime(this)"><input type="text" class="time-box" placeholder="e.g. 4-9" oninput="syncText(this)"><span class="time-text"></span></div></td>
+                    <td><div class="cell-content"><input type="checkbox" onchange="toggleTime(this)"><input type="text" class="time-box" placeholder="e.g. 4-9" oninput="syncText(this)"><span class="time-text"></span></div></td>
+                    <td><div class="cell-content"><input type="checkbox"></div></td>
+                    <td><div class="cell-content"><input type="checkbox"></div></td>
+                </tr>
+                <tr class="day-row">
+                    <td>Thursday</td>
+                    <td><div class="cell-content"><input type="checkbox" onchange="toggleTime(this)"><input type="text" class="time-box" placeholder="e.g. 4-9" oninput="syncText(this)"><span class="time-text"></span></div></td>
+                    <td><div class="cell-content"><input type="checkbox" onchange="toggleTime(this)"><input type="text" class="time-box" placeholder="e.g. 4-9" oninput="syncText(this)"><span class="time-text"></span></div></td>
+                    <td><div class="cell-content"><input type="checkbox"></div></td>
+                    <td><div class="cell-content"><input type="checkbox"></div></td>
+                </tr>
+                <tr class="day-row">
+                    <td>Friday</td>
+                    <td><div class="cell-content"><input type="checkbox" onchange="toggleTime(this)"><input type="text" class="time-box" placeholder="e.g. 4-9" oninput="syncText(this)"><span class="time-text"></span></div></td>
+                    <td><div class="cell-content"><input type="checkbox" onchange="toggleTime(this)"><input type="text" class="time-box" placeholder="e.g. 4-9" oninput="syncText(this)"><span class="time-text"></span></div></td>
+                    <td><div class="cell-content"><input type="checkbox"></div></td>
+                    <td><div class="cell-content"><input type="checkbox"></div></td>
+                </tr>
+                <tr class="day-row">
+                    <td>Saturday</td>
+                    <td><div class="cell-content"><input type="checkbox" onchange="toggleTime(this)"><input type="text" class="time-box" placeholder="e.g. 4-9" oninput="syncText(this)"><span class="time-text"></span></div></td>
+                    <td><div class="cell-content"><input type="checkbox" onchange="toggleTime(this)"><input type="text" class="time-box" placeholder="e.g. 4-9" oninput="syncText(this)"><span class="time-text"></span></div></td>
+                    <td><div class="cell-content"><input type="checkbox"></div></td>
+                    <td><div class="cell-content"><input type="checkbox"></div></td>
+                </tr>
+                <tr class="day-row">
+                    <td>Sunday</td>
+                    <td><div class="cell-content"><input type="checkbox" onchange="toggleTime(this)"><input type="text" class="time-box" placeholder="e.g. 4-9" oninput="syncText(this)"><span class="time-text"></span></div></td>
+                    <td><div class="cell-content"><input type="checkbox" onchange="toggleTime(this)"><input type="text" class="time-box" placeholder="e.g. 4-9" oninput="syncText(this)"><span class="time-text"></span></div></td>
+                    <td><div class="cell-content"><input type="checkbox"></div></td>
+                    <td><div class="cell-content"><input type="checkbox"></div></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="form-group" style="margin-top: 12px;" id="avail-notes-group">
+            <label>Availability Notes / Special Requests</label>
+            <input type="text" placeholder="e.g. Uni timetable, specific hours...">
+        </div>
+    </div>
+
+    <!-- Section 3: Experience -->
+    <div class="card highlight-red">
+        <h3>💼 Work Experience</h3>
+        
+        <div class="exp-row">
+            <div class="exp-main"><label><input type="checkbox"> Sushi / Roll Maker</label></div>
+            <div class="years-select">
+                <label class="years-btn"><input type="radio" name="exp1"> &lt; 1 yr</label>
+                <label class="years-btn"><input type="radio" name="exp1"> 1-2 yrs</label>
+                <label class="years-btn"><input type="radio" name="exp1"> 3+ yrs</label>
+            </div>
+        </div>
+
+        <div class="exp-row">
+            <div class="exp-main"><label><input type="checkbox"> Kitchen Hand / Cook (Hot Food)</label></div>
+            <div class="years-select">
+                <label class="years-btn"><input type="radio" name="exp2"> &lt; 1 yr</label>
+                <label class="years-btn"><input type="radio" name="exp2"> 1-2 yrs</label>
+                <label class="years-btn"><input type="radio" name="exp2"> 3+ yrs</label>
+            </div>
+        </div>
+
+        <div class="exp-row">
+            <div class="exp-main"><label><input type="checkbox"> Hospitality / F&B (Other)</label></div>
+            <div class="years-select">
+                <label class="years-btn"><input type="radio" name="exp3"> &lt; 1 yr</label>
+                <label class="years-btn"><input type="radio" name="exp3"> 1-2 yrs</label>
+                <label class="years-btn"><input type="radio" name="exp3"> 3+ yrs</label>
+            </div>
+        </div>
+
+        <div class="exp-row">
+            <div class="exp-main"><label><input type="checkbox"> Cashier / POS Operation</label></div>
+            <div class="years-select">
+                <label class="years-btn"><input type="radio" name="exp4"> &lt; 1 yr</label>
+                <label class="years-btn"><input type="radio" name="exp4"> 1-2 yrs</label>
+                <label class="years-btn"><input type="radio" name="exp4"> 3+ yrs</label>
+            </div>
+        </div>
+
+        <div class="exp-row">
+            <div class="exp-main"><label><input type="checkbox"> Retail / Customer Service</label></div>
+            <div class="years-select">
+                <label class="years-btn"><input type="radio" name="exp5"> &lt; 1 yr</label>
+                <label class="years-btn"><input type="radio" name="exp5"> 1-2 yrs</label>
+                <label class="years-btn"><input type="radio" name="exp5"> 3+ yrs</label>
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 8px;">
+            <label class="checkbox-label"><input type="checkbox" id="no-exp-check"> No Prior Experience</label>
+        </div>
+
+        <div class="form-group" style="margin-top: 12px;" id="exp-notes-group">
+            <label>Experience Notes</label>
+            <input type="text" placeholder="e.g. Previous shop names, specific skills...">
+        </div>
+    </div>
+
+    <!-- Section 4: Holiday & Season -->
+    <div class="card">
+        <h3>🎄 Upcoming Leave & Holiday Commitments</h3>
+        
+        <div class="form-group" id="holiday-main-container">
+            <label>Any planned holidays or leave?</label>
+            <div class="checkbox-group row-flex">
+                <label class="checkbox-label radio-yes"><input type="radio" name="holiday_plan" onclick="toggleHolidayDetails(true)"> Yes</label>
+                <label class="checkbox-label radio-no"><input type="radio" name="holiday_plan" onclick="toggleHolidayDetails(false)"> No</label>
+            </div>
+            
+            <div id="holiday-details-inside">
+                <label>Holiday Details</label>
+                <input type="text" id="holiday-input-field" placeholder="Where, when, and how long?">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Available during Christmas period?</label>
+            <div class="checkbox-group row-flex">
+                <label class="checkbox-label radio-yes"><input type="radio" name="xmas"> Yes</label>
+                <label class="checkbox-label radio-no"><input type="radio" name="xmas"> No</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Available to work on Boxing Day?</label>
+            <div class="checkbox-group row-flex">
+                <label class="checkbox-label radio-yes"><input type="radio" name="boxing"> Yes</label>
+                <label class="checkbox-label radio-no"><input type="radio" name="boxing"> No</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 5: Soft Skills (อัปเดตตัวเลือกตามที่แจ้งครับ) -->
+    <div class="card">
+        <h3>💬 Soft Skills</h3>
+        
+        <div class="skills-header">👍 Positive Attributes (Ideal for Service & Kitchen)</div>
+        <div class="checkbox-sub-grid">
+            <label class="checkbox-label"><input type="checkbox"> Friendly & Smiling</label>
+            <label class="checkbox-label"><input type="checkbox"> Customer Mindset</label>
+            <label class="checkbox-label"><input type="checkbox"> Vibrant & High Energy</label>
+            <label class="checkbox-label"><input type="checkbox"> Clear Communication</label>
+            <label class="checkbox-label"><input type="checkbox"> Clean Appearance</label>
+            <label class="checkbox-label"><input type="checkbox"> Fast Learner</label>
+            <label class="checkbox-label"><input type="checkbox"> Team Player</label>
+            <label class="checkbox-label"><input type="checkbox"> Multi-tasking</label>
+        </div>
+
+        <div class="skills-header" style="margin-top: 15px;">⚠️ Points to Consider</div>
+        <div class="checkbox-sub-grid">
+            <label class="checkbox-label"><input type="checkbox"> Quite Shy</label>
+            <label class="checkbox-label"><input type="checkbox"> Language Barrier</label>
+            <label class="checkbox-label"><input type="checkbox"> Limited Availability</label>
+            <label class="checkbox-label"><input type="checkbox"> Transport Issue</label>
+            <label class="checkbox-label"><input type="checkbox"> Low Energy</label>
+        </div>
+    </div>
+
+    <!-- Section 6: Comments -->
+    <div class="card" id="comment-card">
+        <h3>📝 Interviewer Comments</h3>
+        <div class="form-group">
+            <label>Additional Notes & Remarks</label>
+            <textarea id="comment-textarea" placeholder="Type summary notes here..."></textarea>
+        </div>
+    </div>
+
+</div> <!-- /#capture-area -->
+
+    <!-- Action Bar -->
+    <div class="action-bar" data-html2canvas-ignore="true">
+        <button class="btn btn-clear" onclick="window.location.reload();">Reset</button>
+        <button class="btn btn-print" onclick="exportCompactImage();">Export Image</button>
+    </div>
+
+</div> <!-- /#capture-wrapper -->
+
+<script>
+    function toggleTime(checkbox) {
+        const box = checkbox.nextElementSibling;
+        if (box && box.classList.contains('time-box')) {
+            box.style.display = checkbox.checked ? 'block' : 'none';
+        }
+    }
+
+    function syncText(input) {
+        const textSpan = input.nextElementSibling;
+        if (textSpan && textSpan.classList.contains('time-text')) {
+            textSpan.innerText = input.value;
+        }
+    }
+
+    function toggleHolidayDetails(show) {
+        const detailsGroup = document.getElementById('holiday-details-inside');
+        detailsGroup.style.display = show ? 'block' : 'none';
+    }
+
+    function exportCompactImage() {
+        const wrapper = document.getElementById('capture-wrapper');
+        const area = document.getElementById('capture-area');
+        
+        wrapper.classList.add('exporting-area');
+        area.classList.add('exporting');
+
+        // 1. ซ่อนแถววันที่ไม่มีการติ๊กเลือกช่องใดๆ เลย
+        document.querySelectorAll('.day-row').forEach(row => {
+            const checkedBoxes = row.querySelectorAll('input[type="checkbox"]:checked');
+            if (checkedBoxes.length === 0) {
+                row.classList.add('hide-on-export');
+            }
+        });
+
+        // 2. ซ่อนแถวประสบการณ์ทำงานที่ไม่ได้เลือก
+        document.querySelectorAll('.exp-row').forEach(row => {
+            const mainCheck = row.querySelector('.exp-main input[type="checkbox"]');
+            if (!mainCheck.checked) {
+                row.classList.add('hide-on-export');
+            }
+        });
+
+        // 3. ซ่อนตัวเลือกย่อยของกลุ่มติ๊กต่างๆ ที่ไม่ได้เลือก
+        document.querySelectorAll('.checkbox-label').forEach(label => {
+            const input = label.querySelector('input');
+            if (input && !input.checked) {
+                label.classList.add('hide-on-export');
+            } else if (input && input.checked) {
+                label.classList.remove('hide-on-export');
+            }
+        });
+
+        // 4. ซ่อนช่องข้อความทั่วไปที่ปล่อยว่างไว้
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+            if (input.value.trim() === "" && !input.classList.contains('time-box') && input.id !== 'holiday-input-field') {
+                const parentGroup = input.closest('.form-group');
+                if (parentGroup) {
+                    parentGroup.classList.add('hide-on-export');
+                }
+            }
+        });
+
+        // ซ่อนกล่องข้อมูลวันหยุดภายในตัว ถ้าปล่อยว่างไว้
+        const holidayInput = document.getElementById('holiday-input-field');
+        if (holidayInput && holidayInput.value.trim() === "") {
+            document.getElementById('holiday-details-inside').classList.add('hide-on-export');
+        }
+
+        // 5. ถ้าช่องคอมเมนต์ไม่ได้พิมพ์เนื้อหา ให้ซ่อนทั้งเซกชันทิ้งไปเลย
+        const commentText = document.getElementById('comment-textarea').value.trim();
+        const commentCard = document.getElementById('comment-card');
+        if (commentText === "") {
+            commentCard.classList.add('hide-on-export');
+        }
+
+        // ดึงชื่อมาตั้งชื่อไฟล์แบบอัตโนมัติ
+        const nameInput = document.getElementById('applicant-name').value.trim();
+        const filename = nameInput ? `${nameInput} - Interview Summary.png` : 'Applicant - Interview Summary.png';
+
+        // เรนเดอร์ตัวภาพผ่าน html2canvas
+        html2canvas(wrapper, {
+            scale: 2, 
+            backgroundColor: "#f5f5f7",
+            useCORS: true,
+            scrollX: 0,
+            scrollY: -window.scrollY
+        }).then(canvas => {
+            const image = canvas.toDataURL("image/png");
+            const link = document.createElement('a');
+            
+            link.download = filename;
+            link.href = image;
+            link.click();
+
+            // รีเซ็ตหน้าจอกลับมาสู่สถานะป้อนข้อมูลปกติ
+            wrapper.classList.remove('exporting-area');
+            area.classList.remove('exporting');
+            document.querySelectorAll('.hide-on-export').forEach(el => {
+                el.classList.remove('hide-on-export');
+            });
+            const holidayYes = document.querySelector('input[name="holiday_plan"]:checked');
+            toggleHolidayDetails(holidayYes && holidayYes.parentNode.innerText.includes('Yes'));
+        });
+    }
+</script>
+
+</body>
+</html>
