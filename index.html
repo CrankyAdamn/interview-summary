@@ -113,13 +113,14 @@
             padding-bottom: 6px;
         }
 
-        /* Dynamic Title Holder during export */
-        .profile-title-text {
+        /* Profile Specific Header Style */
+        .profile-title-red {
+            color: #ff3b30;
             font-weight: 600;
         }
-        .profile-dynamic-name {
-            font-weight: bold;
+        .profile-visa-normal-black {
             color: #1d1d1f;
+            font-weight: 400;
             text-transform: none;
         }
 
@@ -230,18 +231,6 @@
         .row-flex .checkbox-label {
             flex: 1;
             justify-content: center;
-        }
-
-        /* Export view text container */
-        .export-text-display {
-            display: none;
-            font-size: 14px;
-            font-weight: 500;
-            padding: 9px 0;
-            color: #1d1d1f;
-        }
-        .export-text-display strong {
-            font-weight: 600;
         }
 
         /* Experience Specific Style */
@@ -370,7 +359,8 @@
             display: none !important;
         }
         
-        #holiday-details-inside {
+        /* Conditional Details Boxes */
+        .details-conditional-box {
             display: none;
             margin-top: 10px;
             padding-top: 10px;
@@ -395,7 +385,7 @@
             display: block !important;
         }
         
-        /* Forces Left Alignment on Holiday answers during export instead of stretching */
+        /* Forces Left Alignment on Holiday/Leave answers during export instead of stretching */
         .exporting .holiday-group-wrapper .row-flex {
             justify-content: flex-start !important;
             gap: 10px !important;
@@ -404,14 +394,6 @@
             flex: none !important;
             width: auto !important;
             padding: 8px 16px !important;
-        }
-
-        /* Show text view and hide inputs during export */
-        .exporting .export-text-display {
-            display: block !important;
-        }
-        .exporting .visa-input-group-wrapper {
-            display: none !important;
         }
 
         /* 📱 Preview Modal Styles for Mobile Save */
@@ -474,12 +456,12 @@
 
     <!-- Section 1: Profile -->
     <div class="card">
-        <h3 id="profile-card-header"><span class="profile-title-text">👤 Applicant Profile</span><span id="profile-header-dynamic-name" class="profile-dynamic-name"></span></h3>
+        <h3><span class="profile-title-red">👤 Applicant Profile</span><span id="profile-header-dynamic-visa" class="profile-visa-normal-black"></span></h3>
         
         <div class="grid-2">
-            <div class="form-group" id="name-input-group">
+            <div class="form-group">
                 <label>Applicant Name</label>
-                <input type="text" id="applicant-name" class="input-highlight-red" placeholder="Full name" oninput="updateHeaderName()">
+                <input type="text" id="applicant-name" class="input-highlight-red" placeholder="Full name">
             </div>
             <div class="form-group">
                 <label>Address / Suburb</label>
@@ -487,16 +469,15 @@
             </div>
         </div>
         
-        <!-- Visa Status (Always occupies the row space beautifully) -->
+        <!-- Visa Status Selection -->
         <div class="form-group">
-            <label id="visa-main-label">Visa Status</label>
-            <div class="checkbox-group row-flex visa-input-group-wrapper">
-                <label class="checkbox-label"><input type="radio" name="visa_status" value="Citizen / PR"> Citizen / PR</label>
-                <label class="checkbox-label"><input type="radio" name="visa_status" value="Student Visa"> Student Visa</label>
-                <label class="checkbox-label"><input type="radio" name="visa_status" value="WHV (Working Holiday)"> WHV</label>
-                <label class="checkbox-label"><input type="radio" name="visa_status" value="Other"> Other</label>
+            <label>Visa Status</label>
+            <div class="checkbox-group row-flex">
+                <label class="checkbox-label"><input type="radio" name="visa_status" value="Citizen / PR" onclick="updateHeaderVisa()"> Citizen / PR</label>
+                <label class="checkbox-label"><input type="radio" name="visa_status" value="Student Visa" onclick="updateHeaderVisa()"> Student Visa</label>
+                <label class="checkbox-label"><input type="radio" name="visa_status" value="WHV (Working Holiday)" onclick="updateHeaderVisa()"> WHV</label>
+                <label class="checkbox-label"><input type="radio" name="visa_status" value="Other" onclick="updateHeaderVisa()"> Other</label>
             </div>
-            <div id="visa-export-text" class="export-text-display"></div>
         </div>
 
         <div class="grid-2" style="margin-top: 10px;">
@@ -669,14 +650,14 @@
     <div class="card">
         <h3>🎄 Upcoming Leave & Holiday Commitments</h3>
         
-        <div class="form-group holiday-group-wrapper" id="holiday-main-container">
+        <div class="form-group holiday-group-wrapper">
             <label>Any planned holidays or leave?</label>
             <div class="checkbox-group row-flex">
-                <label class="checkbox-label radio-yes"><input type="radio" name="holiday_plan" value="yes" onclick="toggleHolidayDetails(true)"> Yes</label>
-                <label class="checkbox-label radio-no"><input type="radio" name="holiday_plan" value="no" onclick="toggleHolidayDetails(false)"> No</label>
+                <label class="checkbox-label radio-yes"><input type="radio" name="holiday_plan" value="yes" onclick="toggleConditionalDetails('holiday-details-inside', true)"> Yes</label>
+                <label class="checkbox-label radio-no"><input type="radio" name="holiday_plan" value="no" onclick="toggleConditionalDetails('holiday-details-inside', false)"> No</label>
             </div>
             
-            <div id="holiday-details-inside">
+            <div id="holiday-details-inside" class="details-conditional-box">
                 <label>Holiday Details</label>
                 <input type="text" id="holiday-input-field" placeholder="Where, when, and how long?">
             </div>
@@ -685,15 +666,26 @@
         <div class="form-group holiday-group-wrapper">
             <label>Available during Christmas period?</label>
             <div class="checkbox-group row-flex">
-                <label class="checkbox-label radio-yes"><input type="radio" name="xmas" value="yes"> Yes</label>
-                <label class="checkbox-label radio-no"><input type="radio" name="xmas" value="no"> No</label>
+                <label class="checkbox-label radio-yes"><input type="radio" name="xmas" value="yes" onclick="toggleConditionalDetails('xmas-details-inside', true)"> Yes</label>
+                <label class="checkbox-label radio-no"><input type="radio" name="xmas" value="no" onclick="toggleConditionalDetails('xmas-details-inside', false)"> No</label>
+            </div>
+
+            <div id="xmas-details-inside" class="details-conditional-box">
+                <label>Christmas Leave Details</label>
+                <input type="text" id="xmas-input-field" placeholder="Any specific dates or restrictions?">
             </div>
         </div>
+
         <div class="form-group holiday-group-wrapper">
             <label>Available to work on Boxing Day?</label>
             <div class="checkbox-group row-flex">
-                <label class="checkbox-label radio-yes"><input type="radio" name="boxing" value="yes"> Yes</label>
-                <label class="checkbox-label radio-no"><input type="radio" name="boxing" value="no"> No</label>
+                <label class="checkbox-label radio-yes"><input type="radio" name="boxing" value="yes" onclick="toggleConditionalDetails('boxing-details-inside', true)"> Yes</label>
+                <label class="checkbox-label radio-no"><input type="radio" name="boxing" value="no" onclick="toggleConditionalDetails('boxing-details-inside', false)"> No</label>
+            </div>
+
+            <div id="boxing-details-inside" class="details-conditional-box">
+                <label>Boxing Day Details</label>
+                <input type="text" id="boxing-input-field" placeholder="e.g. Shift limitations or timing rules...">
             </div>
         </div>
     </div>
@@ -776,18 +768,20 @@
         }
     }
 
-    function toggleHolidayDetails(show) {
-        const detailsGroup = document.getElementById('holiday-details-inside');
-        detailsGroup.style.display = show ? 'block' : 'none';
+    function toggleConditionalDetails(elementId, show) {
+        const detailsGroup = document.getElementById(elementId);
+        if (detailsGroup) {
+            detailsGroup.style.display = show ? 'block' : 'none';
+        }
     }
 
-    function updateHeaderName() {
-        const nameVal = document.getElementById('applicant-name').value.trim();
-        const headerDynamic = document.getElementById('profile-header-dynamic-name');
-        if (nameVal) {
-            headerDynamic.innerHTML = ` - <strong>NAME: ${nameVal}</strong>`;
+    function updateHeaderVisa() {
+        const visaRadio = document.querySelector('input[name="visa_status"]:checked');
+        const headerDynamic = document.getElementById('profile-header-dynamic-visa');
+        if (visaRadio) {
+            headerDynamic.innerText = ` - Visa Status: ${visaRadio.value}`;
         } else {
-            headerDynamic.innerHTML = '';
+            headerDynamic.innerText = '';
         }
     }
 
@@ -797,16 +791,20 @@
         
         document.getElementById('capture-wrapper').classList.remove('exporting-area');
         document.getElementById('capture-area').classList.remove('exporting');
-        
-        // Restore standard DOM UI structures
-        document.getElementById('name-input-group').classList.remove('hide-on-export');
-        document.getElementById('visa-main-label').style.display = 'block';
 
         document.querySelectorAll('.hide-on-export').forEach(el => {
             el.classList.remove('hide-on-export');
         });
+        
+        // Restore standard DOM UI display for inputs after image is generated
         const holidayYes = document.querySelector('input[name="holiday_plan"]:checked');
-        toggleHolidayDetails(holidayYes && holidayYes.value === 'yes');
+        toggleConditionalDetails('holiday-details-inside', holidayYes && holidayYes.value === 'yes');
+        
+        const xmasYes = document.querySelector('input[name="xmas"]:checked');
+        toggleConditionalDetails('xmas-details-inside', xmasYes && xmasYes.value === 'yes');
+
+        const boxingYes = document.querySelector('input[name="boxing"]:checked');
+        toggleConditionalDetails('boxing-details-inside', boxingYes && boxingYes.value === 'yes');
     }
 
     // --- 💾 Auto-save Engine (LocalStorage System) ---
@@ -830,7 +828,9 @@
             holiday_plan: document.querySelector('input[name="holiday_plan"]:checked')?.value || '',
             holiday_details: document.getElementById('holiday-input-field').value,
             xmas: document.querySelector('input[name="xmas"]:checked')?.value || '',
+            xmas_details: document.getElementById('xmas-input-field').value,
             boxing: document.querySelector('input[name="boxing"]:checked')?.value || '',
+            boxing_details: document.getElementById('boxing-input-field').value,
             comments: document.getElementById('comment-textarea').value,
             availability: [],
             experience_radios: {},
@@ -869,13 +869,13 @@
             
             document.getElementById('applicant-name').value = data.name || '';
             document.getElementById('applicant-suburb').value = data.suburb || '';
-            
-            updateHeaderName();
 
             if (data.visa_status) {
                 const visaRadio = document.querySelector(`input[name="visa_status"][value="${data.visa_status}"]`);
                 if (visaRadio) visaRadio.checked = true;
             }
+            updateHeaderVisa();
+
             if (data.tfn) document.querySelector(`input[name="tfn"][value="${data.tfn}"]`).checked = true;
             if (data.super) document.querySelector(`input[name="super"][value="${data.super}"]`).checked = true;
             
@@ -892,12 +892,21 @@
             
             if (data.holiday_plan) {
                 document.querySelector(`input[name="holiday_plan"][value="${data.holiday_plan}"]`).checked = true;
-                toggleHolidayDetails(data.holiday_plan === 'yes');
+                toggleConditionalDetails('holiday-details-inside', data.holiday_plan === 'yes');
             }
             document.getElementById('holiday-input-field').value = data.holiday_details || '';
-            
-            if (data.xmas) document.querySelector(`input[name="xmas"][value="${data.xmas}"]`).checked = true;
-            if (data.boxing) document.querySelector(`input[name="boxing"][value="${data.boxing}"]`).checked = true;
+
+            if (data.xmas) {
+                document.querySelector(`input[name="xmas"][value="${data.xmas}"]`).checked = true;
+                toggleConditionalDetails('xmas-details-inside', data.xmas === 'yes');
+            }
+            document.getElementById('xmas-input-field').value = data.xmas_details || '';
+
+            if (data.boxing) {
+                document.querySelector(`input[name="boxing"][value="${data.boxing}"]`).checked = true;
+                toggleConditionalDetails('boxing-details-inside', data.boxing === 'yes');
+            }
+            document.getElementById('boxing-input-field').value = data.boxing_details || '';
             
             document.getElementById('comment-textarea').value = data.comments || '';
 
@@ -956,17 +965,8 @@
         const wrapper = document.getElementById('capture-wrapper');
         const area = document.getElementById('capture-area');
         
-        // Setup text view for Visa Status inside the export file
-        const selectedVisa = document.querySelector('input[name="visa_status"]:checked')?.value || 'Not Specified';
-        const visaExportDisplay = document.getElementById('visa-export-text');
-        visaExportDisplay.innerHTML = `<strong>Visa Status:</strong> ${selectedVisa}`;
-
         wrapper.classList.add('exporting-area');
         area.classList.add('exporting');
-
-        // Hide original Name box and raw Visa label elements during image build
-        document.getElementById('name-input-group').classList.add('hide-on-export');
-        document.getElementById('visa-main-label').style.display = 'none';
 
         // 1. Hide rows with no checked availability
         document.querySelectorAll('#availability-tbody .day-row').forEach(row => {
@@ -1001,7 +1001,7 @@
 
         // 4. Hide empty generic input boxes
         document.querySelectorAll('input[type="text"]').forEach(input => {
-            if (input.value.trim() === "" && !input.classList.contains('time-box') && input.id !== 'holiday-input-field' && !input.classList.contains('exp-note-input')) {
+            if (input.value.trim() === "" && !input.classList.contains('time-box') && !input.classList.contains('exp-note-input') && input.id !== 'holiday-input-field' && input.id !== 'xmas-input-field' && input.id !== 'boxing-input-field') {
                 const parentGroup = input.closest('.form-group');
                 if (parentGroup) {
                     parentGroup.classList.add('hide-on-export');
@@ -1009,9 +1009,20 @@
             }
         });
 
+        // 5. Explicitly hide conditional boxes if they are blank inside
         const holidayInput = document.getElementById('holiday-input-field');
         if (holidayInput && holidayInput.value.trim() === "") {
             document.getElementById('holiday-details-inside').classList.add('hide-on-export');
+        }
+
+        const xmasInput = document.getElementById('xmas-input-field');
+        if (xmasInput && xmasInput.value.trim() === "") {
+            document.getElementById('xmas-details-inside').classList.add('hide-on-export');
+        }
+
+        const boxingInput = document.getElementById('boxing-input-field');
+        if (boxingInput && boxingInput.value.trim() === "") {
+            document.getElementById('boxing-details-inside').classList.add('hide-on-export');
         }
 
         const commentText = document.getElementById('comment-textarea').value.trim();
@@ -1050,15 +1061,19 @@
 
                 wrapper.classList.remove('exporting-area');
                 area.classList.remove('exporting');
-                
-                document.getElementById('name-input-group').classList.remove('hide-on-export');
-                document.getElementById('visa-main-label').style.display = 'block';
 
                 document.querySelectorAll('.hide-on-export').forEach(el => {
                     el.classList.remove('hide-on-export');
                 });
+                
                 const holidayYes = document.querySelector('input[name="holiday_plan"]:checked');
-                toggleHolidayDetails(holidayYes && holidayYes.value === 'yes');
+                toggleConditionalDetails('holiday-details-inside', holidayYes && holidayYes.value === 'yes');
+
+                const xmasYes = document.querySelector('input[name="xmas"]:checked');
+                toggleConditionalDetails('xmas-details-inside', xmasYes && xmasYes.value === 'yes');
+
+                const boxingYes = document.querySelector('input[name="boxing"]:checked');
+                toggleConditionalDetails('boxing-details-inside', boxingYes && boxingYes.value === 'yes');
             }
         });
     }
