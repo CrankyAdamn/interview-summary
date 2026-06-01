@@ -118,9 +118,9 @@
             color: #ff3b30;
             font-weight: 600;
         }
-        .profile-visa-normal-black {
-            color: #1d1d1f;
-            font-weight: 400;
+        .profile-visa-blue-accent {
+            color: #0071e3;
+            font-weight: 500;
             text-transform: none;
         }
 
@@ -456,7 +456,7 @@
 
     <!-- Section 1: Profile -->
     <div class="card">
-        <h3><span class="profile-title-red">👤 Applicant Profile</span><span id="profile-header-dynamic-visa" class="profile-visa-normal-black"></span></h3>
+        <h3><span class="profile-title-red">👤 Applicant Profile</span><span id="profile-header-dynamic-visa" class="profile-visa-blue-accent"></span></h3>
         
         <div class="grid-2">
             <div class="form-group">
@@ -469,8 +469,8 @@
             </div>
         </div>
         
-        <!-- Visa Status Selection -->
-        <div class="form-group">
+        <!-- Visa Status Selection (Hidden on image save) -->
+        <div class="form-group" id="visa-selection-wrapper">
             <label>Visa Status</label>
             <div class="checkbox-group row-flex">
                 <label class="checkbox-label"><input type="radio" name="visa_status" value="Citizen / PR" onclick="updateHeaderVisa()"> Citizen / PR</label>
@@ -967,6 +967,12 @@
         
         wrapper.classList.add('exporting-area');
         area.classList.add('exporting');
+
+        // Hide Visa Selection Wrapper completely on image generation
+        const visaSelection = document.getElementById('visa-selection-wrapper');
+        if (visaSelection) {
+            visaSelection.classList.add('hide-on-export');
+        }
 
         // 1. Hide rows with no checked availability
         document.querySelectorAll('#availability-tbody .day-row').forEach(row => {
