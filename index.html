@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Applicant Interview Summary</title>
-    <!-- Library to convert web page to image -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         /* Apple-inspired Minimalist Design */
@@ -26,6 +25,7 @@
 
         .form-container { 
             width: 100%;
+            box-sizing: border-box;
         }
 
         /* Action Buttons */
@@ -49,13 +49,14 @@
         .btn-clear { background-color: #e8e8ed; color: #1d1d1f; }
         .btn-clear:hover { background-color: #d2d2d7; }
         
-        /* Footer Credits */
+        /* Footer Credits - New Color and Safe Alignment */
         .footer-credits {
             text-align: right;
             font-size: 11px;
-            color: #f7f7f7;
-            padding-right: 5px;
-            margin-bottom: 20px;
+            color: #e6e6e6;
+            padding-right: 8px;
+            margin-top: 10px;
+            margin-bottom: 10px;
             user-select: none;
         }
 
@@ -340,13 +341,15 @@
             border-top: 1px dashed #e8e8ed;
         }
 
-        /* Forced Balance Realignment on Capturing Setup */
+        /* Forced Clean Central Symmetry Configs during Capturing Process */
         .exporting-area {
             padding: 24px !important;
             background-color: #f5f5f7 !important;
             border-radius: 0px !important;
+            width: 580px !important;
+            max-width: 580px !important;
             margin: 0 auto !important;
-            float: none !important;
+            position: relative !important;
         }
 
         .exporting .time-box {
@@ -411,10 +414,8 @@
 <div class="export-wrapper" id="capture-wrapper">
 <div class="form-container" id="capture-area">
     
-    <!-- Right-aligned Header Title -->
     <h1>Applicant Interview Summary<span class="divider">|</span><span class="shop-name">Hero Sushi Tuggerah</span></h1>
 
-    <!-- Section 1: Profile -->
     <div class="card">
         <h3>👤 Applicant Profile</h3>
         <div class="grid-2">
@@ -464,7 +465,6 @@
         </div>
     </div>
 
-    <!-- Section 2: Availability -->
     <div class="card highlight-red">
         <h3>📅 Availability & Shifts</h3>
         <table>
@@ -478,7 +478,6 @@
                 </tr>
             </thead>
             <tbody id="availability-tbody">
-                <!-- Rows will be injected with IDs dynamically for Auto-save indexing -->
                 <tr class="day-row" data-day="Mon">
                     <td>Monday</td>
                     <td><div class="cell-content"><input type="checkbox" class="avail-check" onchange="toggleTime(this)"><input type="text" class="time-box" placeholder="e.g. 4-9" oninput="syncText(this)"><span class="time-text"></span></div></td>
@@ -536,7 +535,6 @@
         </div>
     </div>
 
-    <!-- Section 3: Experience -->
     <div class="card highlight-red" id="experience-card">
         <h3>💼 Work Experience</h3>
         
@@ -595,7 +593,6 @@
         </div>
     </div>
 
-    <!-- Section 4: Holiday & Season -->
     <div class="card">
         <h3>🎄 Upcoming Leave & Holiday Commitments</h3>
         
@@ -628,7 +625,6 @@
         </div>
     </div>
 
-    <!-- Section 5: Soft Skills -->
     <div class="card" id="soft-skills-card">
         <h3>💬 Soft Skills</h3>
         
@@ -654,7 +650,6 @@
         </div>
     </div>
 
-    <!-- Section 6: Comments -->
     <div class="card" id="comment-card">
         <h3>📝 Interviewer Comments</h3>
         <div class="form-group">
@@ -663,21 +658,14 @@
         </div>
     </div>
 
-</div> <!-- /#capture-area -->
+    <div class="footer-credits">Created by Adam</div>
 
-    <!-- Action Bar -->
-    <div class="action-bar" data-html2canvas-ignore="true">
+</div> <div class="action-bar" data-html2canvas-ignore="true">
         <button class="btn btn-clear" onclick="clearFormData();">Reset</button>
         <button class="btn btn-print" onclick="exportCompactImage();">Export Image</button>
     </div>
-    
-    <!-- Footer Credit Text -->
-    <div class="footer-credits" data-html2canvas-ignore="true">Created by Adam</div>
 
-</div> <!-- /#capture-wrapper -->
-
-<!-- Popup Modal Container for Mobile Save Image -->
-<div id="previewModal" class="preview-modal" data-html2canvas-ignore="true">
+</div> <div id="previewModal" class="preview-modal" data-html2canvas-ignore="true">
     <div class="preview-modal-content">
         <div class="preview-instruction">📱 Tap and hold the image to "Save to Photos"</div>
         <div id="imageContainer"></div>
@@ -748,7 +736,6 @@
             soft_skills: []
         };
 
-        // Track Availability Table
         document.querySelectorAll('#availability-tbody .day-row').forEach((row, idx) => {
             const rowData = { dayIdx: idx, checks: [], inputs: [] };
             row.querySelectorAll('input[type="checkbox"]').forEach(chk => rowData.checks.push(chk.checked));
@@ -756,7 +743,6 @@
             data.availability.push(rowData);
         });
 
-        // Track Work Experience Groups
         document.querySelectorAll('#experience-card .exp-row').forEach(row => {
             const idx = row.getAttribute('data-index');
             data.experience_checks.push(row.querySelector('.exp-main-check').checked);
@@ -764,7 +750,6 @@
             data.experience_radios['exp' + idx] = activeRadio;
         });
 
-        // Track Soft Skills Array Index
         document.querySelectorAll('#soft-skills-card .skill-chk').forEach((chk, idx) => {
             if (chk.checked) data.soft_skills.push(idx);
         });
@@ -807,14 +792,13 @@
             
             document.getElementById('comment-textarea').value = data.comments || '';
 
-            // Restore Availability
             if (data.availability) {
                 document.querySelectorAll('#availability-tbody .day-row').forEach((row, idx) => {
                     const rowData = data.availability[idx];
                     if (!rowData) return;
                     row.querySelectorAll('input[type="checkbox"]').forEach((chk, cIdx) => {
                         chk.checked = rowData.checks[cIdx] || false;
-                        if (cIdx < 2) toggleTime(chk); // update timebox visibility bounds
+                        if (cIdx < 2) toggleTime(chk);
                     });
                     row.querySelectorAll('input[type="text"]').forEach((txt, tIdx) => {
                         txt.value = rowData.inputs[tIdx] || '';
@@ -823,7 +807,6 @@
                 });
             }
 
-            // Restore Experience Content
             document.querySelectorAll('#experience-card .exp-row').forEach((row, idx) => {
                 const iAttr = row.getAttribute('data-index');
                 row.querySelector('.exp-main-check').checked = data.experience_checks[idx] || false;
@@ -834,7 +817,6 @@
                 }
             });
 
-            // Restore Soft Skills
             if (data.soft_skills) {
                 const skillsList = document.querySelectorAll('#soft-skills-card .skill-chk');
                 data.soft_skills.forEach(idx => { if(skillsList[idx]) skillsList[idx].checked = true; });
@@ -850,7 +832,6 @@
         }
     }
 
-    // Attach active Event Observers once elements finish drawing onto screen
     document.addEventListener("DOMContentLoaded", () => {
         loadFormData();
         document.querySelectorAll('input, textarea').forEach(el => {
@@ -860,12 +841,12 @@
     });
 
 
-    // --- 📸 Export Engine Functionality ---
+    // --- 📸 Target-Locked Export Engine ---
     function exportCompactImage() {
         const wrapper = document.getElementById('capture-wrapper');
         const area = document.getElementById('capture-area');
         
-        // Inject layout styles forcing clean central symmetry 
+        // Apply temporary standard symmetry layout classes
         wrapper.classList.add('exporting-area');
         area.classList.add('exporting');
 
@@ -905,27 +886,23 @@
             }
         });
 
-        // Hide inner holiday details container if empty
         const holidayInput = document.getElementById('holiday-input-field');
         if (holidayInput && holidayInput.value.trim() === "") {
             document.getElementById('holiday-details-inside').classList.add('hide-on-export');
         }
 
-        // 5. Hide the entire comment section if empty
         const commentText = document.getElementById('comment-textarea').value.trim();
         const commentCard = document.getElementById('comment-card');
         if (commentText === "") {
             commentCard.classList.add('hide-on-export');
         }
 
-        // Construct file name using applicant name input
         const nameInput = document.getElementById('applicant-name').value.trim();
         const filename = nameInput ? `${nameInput} - Interview Summary.png` : 'Applicant - Interview Summary.png';
 
-        // Detect mobile/tablet devices
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-        // Render graphic view via html2canvas with forced balanced alignment parameters
+        // Render directly from the locked container bounds to guarantee zero offset errors
         html2canvas(wrapper, {
             scale: 2, 
             backgroundColor: "#f5f5f7",
@@ -933,24 +910,22 @@
             scrollX: 0,
             scrollY: -window.scrollY,
             width: 580,
-            windowWidth: 580
+            windowWidth: 580,
+            x: 0 // Resets relative document shifts ensuring uniform centering matrix
         }).then(canvas => {
             const image = canvas.toDataURL("image/png");
 
             if (isMobile) {
-                // 📱 Mobile Flow: Display image inside modal view for long-press saving
                 const imgElement = document.createElement('img');
                 imgElement.src = image;
                 document.getElementById('imageContainer').appendChild(imgElement);
                 document.getElementById('previewModal').style.display = 'flex';
             } else {
-                // 💻 Desktop Flow: Trigger direct automated file download
                 const link = document.createElement('a');
                 link.download = filename;
                 link.href = image;
                 link.click();
 
-                // Reset screen layout instantly for desktop browsers
                 wrapper.classList.remove('exporting-area');
                 area.classList.remove('exporting');
                 document.querySelectorAll('.hide-on-export').forEach(el => {
