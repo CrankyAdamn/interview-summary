@@ -233,22 +233,27 @@
             justify-content: center;
         }
 
-        /* Experience Specific Style */
-        .exp-row {
+        /* Experience & Holiday Block Specific Style */
+        .exp-row, .holiday-row-block {
             display: flex;
             flex-direction: column;
             background: #f5f5f7;
             padding: 12px 12px 10px 12px;
             border-radius: 12px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             gap: 6px;
         }
+        .holiday-row-block:last-child {
+            margin-bottom: 0;
+        }
+        
         .exp-main {
             display: flex;
             align-items: center;
             font-size: 13px;
         }
         .exp-main input { margin-right: 10px; width: 15px; height: 15px; accent-color: #0071e3; }
+        
         .years-select {
             display: flex;
             gap: 4px;
@@ -277,11 +282,11 @@
         }
         
         /* Embedded Inline Specific Notes Area */
-        .exp-inner-note {
+        .exp-inner-note, .holiday-inner-note {
             margin-left: 25px;
             margin-top: 2px;
         }
-        .exp-inner-note input {
+        .exp-inner-note input, .holiday-inner-note input {
             padding: 6px 10px;
             font-size: 12px;
             border-radius: 6px;
@@ -362,9 +367,7 @@
         /* Conditional Details Boxes */
         .details-conditional-box {
             display: none;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px dashed #e8e8ed;
+            margin-top: 4px;
         }
 
         /* Forced Clean Central Symmetry Configs during Capturing Process */
@@ -647,44 +650,47 @@
     </div>
 
     <!-- Section 4: Holiday & Season -->
-    <div class="card">
+    <div class="card" id="holiday-card">
         <h3>🎄 Upcoming Leave & Holiday Commitments</h3>
         
-        <div class="form-group holiday-group-wrapper">
+        <!-- Row Block 1: Planned Holiday -->
+        <div class="holiday-row-block holiday-group-wrapper">
             <label>Any planned holidays or leave?</label>
             <div class="checkbox-group row-flex">
                 <label class="checkbox-label radio-yes"><input type="radio" name="holiday_plan" value="yes" onclick="toggleConditionalDetails('holiday-details-inside', true)"> Yes</label>
                 <label class="checkbox-label radio-no"><input type="radio" name="holiday_plan" value="no" onclick="toggleConditionalDetails('holiday-details-inside', false)"> No</label>
             </div>
             
-            <div id="holiday-details-inside" class="details-conditional-box">
-                <label>Holiday Details</label>
+            <div id="holiday-details-inside" class="details-conditional-box holiday-inner-note">
+                <label>Details</label>
                 <input type="text" id="holiday-input-field" placeholder="Where, when, and how long?">
             </div>
         </div>
 
-        <div class="form-group holiday-group-wrapper">
+        <!-- Row Block 2: Christmas Period -->
+        <div class="holiday-row-block holiday-group-wrapper">
             <label>Available during Christmas period?</label>
             <div class="checkbox-group row-flex">
                 <label class="checkbox-label radio-yes"><input type="radio" name="xmas" value="yes" onclick="toggleConditionalDetails('xmas-details-inside', true)"> Yes</label>
                 <label class="checkbox-label radio-no"><input type="radio" name="xmas" value="no" onclick="toggleConditionalDetails('xmas-details-inside', false)"> No</label>
             </div>
 
-            <div id="xmas-details-inside" class="details-conditional-box">
-                <label>Christmas Leave Details</label>
+            <div id="xmas-details-inside" class="details-conditional-box holiday-inner-note">
+                <label>Details</label>
                 <input type="text" id="xmas-input-field" placeholder="Any specific dates or restrictions?">
             </div>
         </div>
 
-        <div class="form-group holiday-group-wrapper">
+        <!-- Row Block 3: Boxing Day -->
+        <div class="holiday-row-block holiday-group-wrapper">
             <label>Available to work on Boxing Day?</label>
             <div class="checkbox-group row-flex">
                 <label class="checkbox-label radio-yes"><input type="radio" name="boxing" value="yes" onclick="toggleConditionalDetails('boxing-details-inside', true)"> Yes</label>
                 <label class="checkbox-label radio-no"><input type="radio" name="boxing" value="no" onclick="toggleConditionalDetails('boxing-details-inside', false)"> No</label>
             </div>
 
-            <div id="boxing-details-inside" class="details-conditional-box">
-                <label>Boxing Day Details</label>
+            <div id="boxing-details-inside" class="details-conditional-box holiday-inner-note">
+                <label>Details</label>
                 <input type="text" id="boxing-input-field" placeholder="e.g. Shift limitations or timing rules...">
             </div>
         </div>
@@ -1015,19 +1021,19 @@
             }
         });
 
-        // 5. Explicitly hide conditional boxes if they are blank inside
+        // 5. Force hide Details conditional boxes if they are blank inside during capture
         const holidayInput = document.getElementById('holiday-input-field');
-        if (holidayInput && holidayInput.value.trim() === "") {
+        if (!holidayInput || holidayInput.value.trim() === "") {
             document.getElementById('holiday-details-inside').classList.add('hide-on-export');
         }
 
         const xmasInput = document.getElementById('xmas-input-field');
-        if (xmasInput && xmasInput.value.trim() === "") {
+        if (!xmasInput || xmasInput.value.trim() === "") {
             document.getElementById('xmas-details-inside').classList.add('hide-on-export');
         }
 
         const boxingInput = document.getElementById('boxing-input-field');
-        if (boxingInput && boxingInput.value.trim() === "") {
+        if (!boxingInput || boxingInput.value.trim() === "") {
             document.getElementById('boxing-details-inside').classList.add('hide-on-export');
         }
 
