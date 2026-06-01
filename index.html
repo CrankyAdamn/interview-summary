@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Applicant Interview Summary</title>
+    <!-- Library to convert web page to image -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         /* Apple-inspired Minimalist Design */
@@ -110,6 +111,16 @@
             margin-bottom: 14px;
             border-bottom: 1px solid #f5f5f7;
             padding-bottom: 6px;
+        }
+
+        /* Dynamic Title Holder during export */
+        .profile-title-text {
+            font-weight: 600;
+        }
+        .profile-dynamic-name {
+            font-weight: bold;
+            color: #1d1d1f;
+            text-transform: none;
         }
 
         /* 2-Column Grid */
@@ -219,6 +230,18 @@
         .row-flex .checkbox-label {
             flex: 1;
             justify-content: center;
+        }
+
+        /* Export view text container */
+        .export-text-display {
+            display: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 9px 0;
+            color: #1d1d1f;
+        }
+        .export-text-display strong {
+            font-weight: 600;
         }
 
         /* Experience Specific Style */
@@ -383,6 +406,14 @@
             padding: 8px 16px !important;
         }
 
+        /* Show text view and hide inputs during export */
+        .exporting .export-text-display {
+            display: block !important;
+        }
+        .exporting .visa-input-group-wrapper {
+            display: none !important;
+        }
+
         /* 📱 Preview Modal Styles for Mobile Save */
         .preview-modal {
             display: none;
@@ -438,14 +469,17 @@
 <div class="export-wrapper" id="capture-wrapper">
 <div class="form-container" id="capture-area">
     
+    <!-- Right-aligned Header Title -->
     <h1>Applicant Interview Summary<span class="divider">|</span><span class="shop-name">Hero Sushi Tuggerah</span></h1>
 
+    <!-- Section 1: Profile -->
     <div class="card">
-        <h3>👤 Applicant Profile</h3>
+        <h3 id="profile-card-header"><span class="profile-title-text">👤 Applicant Profile</span><span id="profile-header-dynamic-name" class="profile-dynamic-name"></span></h3>
+        
         <div class="grid-2">
-            <div class="form-group">
+            <div class="form-group" id="name-input-group">
                 <label>Applicant Name</label>
-                <input type="text" id="applicant-name" class="input-highlight-red" placeholder="Full name">
+                <input type="text" id="applicant-name" class="input-highlight-red" placeholder="Full name" oninput="updateHeaderName()">
             </div>
             <div class="form-group">
                 <label>Address / Suburb</label>
@@ -453,7 +487,19 @@
             </div>
         </div>
         
-        <div class="grid-2">
+        <!-- Visa Status (Always occupies the row space beautifully) -->
+        <div class="form-group">
+            <label id="visa-main-label">Visa Status</label>
+            <div class="checkbox-group row-flex visa-input-group-wrapper">
+                <label class="checkbox-label"><input type="radio" name="visa_status" value="Citizen / PR"> Citizen / PR</label>
+                <label class="checkbox-label"><input type="radio" name="visa_status" value="Student Visa"> Student Visa</label>
+                <label class="checkbox-label"><input type="radio" name="visa_status" value="WHV (Working Holiday)"> WHV</label>
+                <label class="checkbox-label"><input type="radio" name="visa_status" value="Other"> Other</label>
+            </div>
+            <div id="visa-export-text" class="export-text-display"></div>
+        </div>
+
+        <div class="grid-2" style="margin-top: 10px;">
             <div class="form-group">
                 <label>TFN Status</label>
                 <div class="checkbox-group row-flex">
@@ -489,6 +535,7 @@
         </div>
     </div>
 
+    <!-- Section 2: Availability -->
     <div class="card highlight-red">
         <h3>📅 Availability & Shifts</h3>
         <table>
@@ -559,6 +606,7 @@
         </div>
     </div>
 
+    <!-- Section 3: Experience -->
     <div class="card highlight-red" id="experience-card">
         <h3>💼 Work Experience</h3>
         
@@ -617,6 +665,7 @@
         </div>
     </div>
 
+    <!-- Section 4: Holiday & Season -->
     <div class="card">
         <h3>🎄 Upcoming Leave & Holiday Commitments</h3>
         
@@ -649,6 +698,7 @@
         </div>
     </div>
 
+    <!-- Section 5: Soft Skills -->
     <div class="card" id="soft-skills-card">
         <h3>💬 Soft Skills</h3>
         
@@ -680,6 +730,7 @@
         </div>
     </div>
 
+    <!-- Section 6: Comments -->
     <div class="card" id="comment-card">
         <h3>📝 Interviewer Comments</h3>
         <div class="form-group">
@@ -688,14 +739,21 @@
         </div>
     </div>
 
+    <!-- Footer Credit Text -->
     <div class="footer-credits">Created by Adam</div>
 
-</div> <div class="action-bar" data-html2canvas-ignore="true">
+</div> <!-- /#capture-area -->
+
+    <!-- Action Bar -->
+    <div class="action-bar" data-html2canvas-ignore="true">
         <button class="btn btn-clear" onclick="clearFormData();">Reset</button>
         <button class="btn btn-print" onclick="exportCompactImage();">Export Image</button>
     </div>
 
-</div> <div id="previewModal" class="preview-modal" data-html2canvas-ignore="true">
+</div> <!-- /#capture-wrapper -->
+
+<!-- Popup Modal Container for Mobile Save Image -->
+<div id="previewModal" class="preview-modal" data-html2canvas-ignore="true">
     <div class="preview-modal-content">
         <div class="preview-instruction">📱 Tap and hold the image to "Save to Photos"</div>
         <div id="imageContainer"></div>
@@ -723,12 +781,27 @@
         detailsGroup.style.display = show ? 'block' : 'none';
     }
 
+    function updateHeaderName() {
+        const nameVal = document.getElementById('applicant-name').value.trim();
+        const headerDynamic = document.getElementById('profile-header-dynamic-name');
+        if (nameVal) {
+            headerDynamic.innerHTML = ` - <strong>NAME: ${nameVal}</strong>`;
+        } else {
+            headerDynamic.innerHTML = '';
+        }
+    }
+
     function closeModal() {
         document.getElementById('previewModal').style.display = 'none';
         document.getElementById('imageContainer').innerHTML = '';
         
         document.getElementById('capture-wrapper').classList.remove('exporting-area');
         document.getElementById('capture-area').classList.remove('exporting');
+        
+        // Restore standard DOM UI structures
+        document.getElementById('name-input-group').classList.remove('hide-on-export');
+        document.getElementById('visa-main-label').style.display = 'block';
+
         document.querySelectorAll('.hide-on-export').forEach(el => {
             el.classList.remove('hide-on-export');
         });
@@ -743,6 +816,7 @@
         const data = {
             name: document.getElementById('applicant-name').value,
             suburb: document.getElementById('applicant-suburb').value,
+            visa_status: document.querySelector('input[name="visa_status"]:checked')?.value || '',
             tfn: document.querySelector('input[name="tfn"]:checked')?.value || '',
             super: document.querySelector('input[name="super"]:checked')?.value || '',
             emp_ft: document.getElementById('emp-ft').checked,
@@ -796,6 +870,12 @@
             document.getElementById('applicant-name').value = data.name || '';
             document.getElementById('applicant-suburb').value = data.suburb || '';
             
+            updateHeaderName();
+
+            if (data.visa_status) {
+                const visaRadio = document.querySelector(`input[name="visa_status"][value="${data.visa_status}"]`);
+                if (visaRadio) visaRadio.checked = true;
+            }
             if (data.tfn) document.querySelector(`input[name="tfn"][value="${data.tfn}"]`).checked = true;
             if (data.super) document.querySelector(`input[name="super"][value="${data.super}"]`).checked = true;
             
@@ -876,11 +956,20 @@
         const wrapper = document.getElementById('capture-wrapper');
         const area = document.getElementById('capture-area');
         
+        // Setup text view for Visa Status inside the export file
+        const selectedVisa = document.querySelector('input[name="visa_status"]:checked')?.value || 'Not Specified';
+        const visaExportDisplay = document.getElementById('visa-export-text');
+        visaExportDisplay.innerHTML = `<strong>Visa Status:</strong> ${selectedVisa}`;
+
         wrapper.classList.add('exporting-area');
         area.classList.add('exporting');
 
+        // Hide original Name box and raw Visa label elements during image build
+        document.getElementById('name-input-group').classList.add('hide-on-export');
+        document.getElementById('visa-main-label').style.display = 'none';
+
         // 1. Hide rows with no checked availability
-        document.querySelectorAll('.day-row').forEach(row => {
+        document.querySelectorAll('#availability-tbody .day-row').forEach(row => {
             const checkedBoxes = row.querySelectorAll('input[type="checkbox"]:checked');
             if (checkedBoxes.length === 0) {
                 row.classList.add('hide-on-export');
@@ -961,6 +1050,10 @@
 
                 wrapper.classList.remove('exporting-area');
                 area.classList.remove('exporting');
+                
+                document.getElementById('name-input-group').classList.remove('hide-on-export');
+                document.getElementById('visa-main-label').style.display = 'block';
+
                 document.querySelectorAll('.hide-on-export').forEach(el => {
                     el.classList.remove('hide-on-export');
                 });
