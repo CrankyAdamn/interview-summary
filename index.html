@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Applicant Interview Summary</title>
-    <!-- Library to convert web page to image -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         /* Apple-inspired Minimalist Design */
@@ -489,10 +488,8 @@
 <div class="export-wrapper" id="capture-wrapper">
 <div class="form-container" id="capture-area">
     
-    <!-- Right-aligned Header Title -->
     <h1>Applicant Interview Summary<span class="divider">|</span><span class="shop-name">Hero Sushi Tuggerah</span></h1>
 
-    <!-- Section 1: Profile -->
     <div class="card">
         <h3><span class="profile-title-red">👤 Applicant Profile</span><span id="profile-header-dynamic-visa" class="profile-visa-blue-accent"></span></h3>
         
@@ -507,7 +504,6 @@
             </div>
         </div>
         
-        <!-- Visa Status Selection (Hidden on image save) -->
         <div class="form-group" id="visa-selection-wrapper">
             <label>Visa Status</label>
             <div class="checkbox-group row-flex">
@@ -554,7 +550,6 @@
         </div>
     </div>
 
-    <!-- Section 2: Availability -->
     <div class="card highlight-red">
         <h3>📅 Availability & Shifts</h3>
         <table>
@@ -625,7 +620,6 @@
         </div>
     </div>
 
-    <!-- Section 3: Experience -->
     <div class="card highlight-red" id="experience-card">
         <h3>💼 Work Experience</h3>
         
@@ -684,11 +678,9 @@
         </div>
     </div>
 
-    <!-- Section 4: Holiday & Season (2-Column Ultra Compact Version) -->
     <div class="card" id="holiday-card">
         <h3>🎄 Upcoming Holiday Commitments</h3>
         
-        <!-- Row Block 1: Planned Holiday -->
         <div class="holiday-row-block holiday-group-wrapper">
             <div class="holiday-top-layout">
                 <div class="holiday-question">Any planned holidays?</div>
@@ -703,7 +695,6 @@
             </div>
         </div>
 
-        <!-- Row Block 2: Christmas Period -->
         <div class="holiday-row-block holiday-group-wrapper">
             <div class="holiday-top-layout">
                 <div class="holiday-question">Available during Christmas period?</div>
@@ -718,7 +709,6 @@
             </div>
         </div>
 
-        <!-- Row Block 3: Boxing Day -->
         <div class="holiday-row-block holiday-group-wrapper">
             <div class="holiday-top-layout">
                 <div class="holiday-question">Available to work on Boxing Day?</div>
@@ -734,7 +724,6 @@
         </div>
     </div>
 
-    <!-- Section 5: Soft Skills -->
     <div class="card" id="soft-skills-card">
         <h3>💬 Soft Skills</h3>
         
@@ -766,7 +755,6 @@
         </div>
     </div>
 
-    <!-- Section 6: Comments -->
     <div class="card" id="comment-card">
         <h3>📝 Interviewer Comments</h3>
         <div class="form-group">
@@ -775,21 +763,14 @@
         </div>
     </div>
 
-    <!-- Footer Credit Text -->
     <div class="footer-credits">Created by Adam</div>
 
-</div> <!-- /#capture-area -->
-
-    <!-- Action Bar -->
-    <div class="action-bar" data-html2canvas-ignore="true">
+</div> <div class="action-bar" data-html2canvas-ignore="true">
         <button class="btn btn-clear" onclick="clearFormData();">Reset</button>
         <button class="btn btn-print" onclick="exportCompactImage();">Export Image</button>
     </div>
 
-</div> <!-- /#capture-wrapper -->
-
-<!-- Popup Modal Container for Mobile Save Image -->
-<div id="previewModal" class="preview-modal" data-html2canvas-ignore="true">
+</div> <div id="previewModal" class="preview-modal" data-html2canvas-ignore="true">
     <div class="preview-modal-content">
         <div class="preview-instruction">📱 Tap and hold the image to "Save to Photos"</div>
         <div id="imageContainer"></div>
@@ -903,8 +884,14 @@
             }
             updateHeaderVisa();
 
-            if (data.tfn) document.querySelector(`input[name="tfn"][value="${data.tfn}"]`).checked = true;
-            if (data.super) document.querySelector(`input[name="super"][value="${data.super}"]`).checked = true;
+            if (data.tfn) {
+                const node = document.querySelector(`input[name="tfn"][value="${data.tfn}"]`);
+                if(node) node.checked = true;
+            }
+            if (data.super) {
+                const node = document.querySelector(`input[name="super"][value="${data.super}"]`);
+                if(node) node.checked = true;
+            }
             
             document.getElementById('emp-ft').checked = data.emp_ft || false;
             document.getElementById('emp-pt').checked = data.emp_pt || false;
@@ -1025,8 +1012,15 @@
         // 3. Hide unchecked items inside standard checkbox grids (Except YES/NO buttons for Holiday)
         document.querySelectorAll('.checkbox-label').forEach(label => {
             const input = label.querySelector('input');
+            // Hide normal checkboxes or generic radios if they are not selected
             if (input && !input.checked && !label.classList.contains('radio-yes') && !label.classList.contains('radio-no')) {
                 label.classList.add('hide-on-export');
+            }
+            // Dynamic rule update: For specific Radio YES/NO options, hide the opposite unselected button completely
+            if (input && (label.classList.contains('radio-yes') || label.classList.contains('radio-no'))) {
+                if (!input.checked) {
+                    label.classList.add('hide-on-export');
+                }
             }
         });
 
