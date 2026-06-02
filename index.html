@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Applicant Interview Summary</title>
+    <!-- Library to convert web page to image -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         /* Apple-inspired Minimalist Design */
@@ -488,8 +489,10 @@
 <div class="export-wrapper" id="capture-wrapper">
 <div class="form-container" id="capture-area">
     
+    <!-- Right-aligned Header Title -->
     <h1>Applicant Interview Summary<span class="divider">|</span><span class="shop-name">Hero Sushi Tuggerah</span></h1>
 
+    <!-- Section 1: Profile -->
     <div class="card">
         <h3><span class="profile-title-red">👤 Applicant Profile</span><span id="profile-header-dynamic-visa" class="profile-visa-blue-accent"></span></h3>
         
@@ -504,6 +507,7 @@
             </div>
         </div>
         
+        <!-- Visa Status Selection (Hidden on image save) -->
         <div class="form-group" id="visa-selection-wrapper">
             <label>Visa Status</label>
             <div class="checkbox-group row-flex">
@@ -550,6 +554,7 @@
         </div>
     </div>
 
+    <!-- Section 2: Availability -->
     <div class="card highlight-red">
         <h3>📅 Availability & Shifts</h3>
         <table>
@@ -620,6 +625,7 @@
         </div>
     </div>
 
+    <!-- Section 3: Experience -->
     <div class="card highlight-red" id="experience-card">
         <h3>💼 Work Experience</h3>
         
@@ -678,9 +684,11 @@
         </div>
     </div>
 
+    <!-- Section 4: Holiday & Season (2-Column Ultra Compact Version) -->
     <div class="card" id="holiday-card">
         <h3>🎄 Upcoming Holiday Commitments</h3>
         
+        <!-- Row Block 1: Planned Holiday -->
         <div class="holiday-row-block holiday-group-wrapper">
             <div class="holiday-top-layout">
                 <div class="holiday-question">Any planned holidays?</div>
@@ -695,6 +703,7 @@
             </div>
         </div>
 
+        <!-- Row Block 2: Christmas Period -->
         <div class="holiday-row-block holiday-group-wrapper">
             <div class="holiday-top-layout">
                 <div class="holiday-question">Available during Christmas period?</div>
@@ -709,6 +718,7 @@
             </div>
         </div>
 
+        <!-- Row Block 3: Boxing Day -->
         <div class="holiday-row-block holiday-group-wrapper">
             <div class="holiday-top-layout">
                 <div class="holiday-question">Available to work on Boxing Day?</div>
@@ -724,6 +734,7 @@
         </div>
     </div>
 
+    <!-- Section 5: Soft Skills -->
     <div class="card" id="soft-skills-card">
         <h3>💬 Soft Skills</h3>
         
@@ -755,6 +766,7 @@
         </div>
     </div>
 
+    <!-- Section 6: Comments -->
     <div class="card" id="comment-card">
         <h3>📝 Interviewer Comments</h3>
         <div class="form-group">
@@ -763,14 +775,21 @@
         </div>
     </div>
 
+    <!-- Footer Credit Text -->
     <div class="footer-credits">Created by Adam</div>
 
-</div> <div class="action-bar" data-html2canvas-ignore="true">
+</div> <!-- /#capture-area -->
+
+    <!-- Action Bar -->
+    <div class="action-bar" data-html2canvas-ignore="true">
         <button class="btn btn-clear" onclick="clearFormData();">Reset</button>
         <button class="btn btn-print" onclick="exportCompactImage();">Export Image</button>
     </div>
 
-</div> <div id="previewModal" class="preview-modal" data-html2canvas-ignore="true">
+</div> <!-- /#capture-wrapper -->
+
+<!-- Popup Modal Container for Mobile Save Image -->
+<div id="previewModal" class="preview-modal" data-html2canvas-ignore="true">
     <div class="preview-modal-content">
         <div class="preview-instruction">📱 Tap and hold the image to "Save to Photos"</div>
         <div id="imageContainer"></div>
@@ -899,17 +918,20 @@
             document.getElementById('no-exp-check').checked = data.no_exp || false;
             
             if (data.holiday_plan) {
-                document.querySelector(`input[name="holiday_plan"][value="${data.holiday_plan}"]`).checked = true;
+                const node = document.querySelector(`input[name="holiday_plan"][value="${data.holiday_plan}"]`);
+                if(node) node.checked = true;
             }
             document.getElementById('holiday-input-field').value = data.holiday_details || '';
 
             if (data.xmas) {
-                document.querySelector(`input[name="xmas"][value="${data.xmas}"]`).checked = true;
+                const node = document.querySelector(`input[name="xmas"][value="${data.xmas}"]`);
+                if(node) node.checked = true;
             }
             document.getElementById('xmas-input-field').value = data.xmas_details || '';
 
             if (data.boxing) {
-                document.querySelector(`input[name="boxing"][value="${data.boxing}"]`).checked = true;
+                const node = document.querySelector(`input[name="boxing"][value="${data.boxing}"]`);
+                if(node) node.checked = true;
             }
             document.getElementById('boxing-input-field').value = data.boxing_details || '';
             
@@ -1000,13 +1022,11 @@
             }
         });
 
-        // 3. Hide unchecked items inside standard checkbox grids
+        // 3. Hide unchecked items inside standard checkbox grids (Except YES/NO buttons for Holiday)
         document.querySelectorAll('.checkbox-label').forEach(label => {
             const input = label.querySelector('input');
-            if (input && !input.checked) {
+            if (input && !input.checked && !label.classList.contains('radio-yes') && !label.classList.contains('radio-no')) {
                 label.classList.add('hide-on-export');
-            } else if (input && input.checked) {
-                label.classList.remove('hide-on-export');
             }
         });
 
