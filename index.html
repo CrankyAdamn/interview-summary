@@ -14,6 +14,11 @@
             margin: 0; 
             padding: 20px 15px;
             -webkit-font-smoothing: antialiased;
+            
+            /* 🛠️ FIX FOR IPHONE: บล็อกไม่ให้ iOS ขยายขนาดอักษรเองอัตโนมัติ */
+            -webkit-text-size-adjust: none;
+            -moz-text-size-adjust: none;
+            text-size-adjust: none;
         }
         
         /* Wrapper to control breathing room during Export */
@@ -673,7 +678,7 @@
             <div class="exp-inner-note"><input type="text" class="exp-note-input" placeholder="Experience note"></div>
         </div>
 
-        <div class="form-group" style="margin-top: 8px;">
+        <div class="form-group">
             <label class="checkbox-label"><input type="checkbox" id="no-exp-check"> No Prior Experience</label>
         </div>
     </div>
